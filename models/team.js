@@ -16,6 +16,20 @@ const teamSchema = new Schema(
       type: String,
       require: true,
     },
+    region: {
+      country: {
+        type: String,
+        require: true,
+      },
+      state: {
+        type: String,
+        require: true,
+      },
+      city: {
+        type: String,
+        require: true,
+      },
+    },
   },
   { timestamps: true }
 );
