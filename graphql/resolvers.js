@@ -1,12 +1,22 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { PubSub } = require("apollo-server-express");
 
 const Team = require("../models/team");
 const Shirt = require("../models/shirt");
 const User = require("../models/user");
 const Vote = require("../models/vote");
 
+const pubsub = new PubSub();
+const ADDED_SHIRT_VOTE = "ADDED_SHIRT_VOTE";
+
 module.exports = {
+  Subscription: {
+    addedShirtVote: {
+      subscribe: () => pubsub.asyncIterator([ADDED_SHIRT_VOTE]),
+    },
+  },
+
   Query: {
     login: async function ({ email, password }) {
       const user = await User.findOne({ email });
@@ -40,6 +50,12 @@ module.exports = {
       const teams = await Team.find();
 
       return teams;
+    },
+
+    shirts: async function () {
+      const shirts = await Shirt.find().populate("team");
+
+      return shirts;
     },
   },
 
@@ -94,6 +110,9 @@ module.exports = {
 
       shirt.votes += 1;
       await shirt.save();
+      const populatedData = await Shirt.populate(shirt, { path: "team" });
+
+      pubsub.publish(ADDED_SHIRT_VOTE, { addedShirtVote: populatedData });
 
       const vote = new Vote({ userId, shirtId });
       const voteData = await vote.save();
