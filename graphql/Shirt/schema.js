@@ -1,6 +1,14 @@
 const { gql } = require("apollo-server-express");
 
 module.exports = gql`
+  extend type Mutation {
+    createShirt(shirtInput: ShirtInputData): Shirt!
+  }
+
+  extend type Query {
+    shirts: [Shirt!]!
+  }
+
   type Shirt {
     _id: ID!
     name: String!

@@ -1,6 +1,14 @@
 const { gql } = require("apollo-server-express");
 
 module.exports = gql`
+  extend type Mutation {
+    createTeam(teamInput: TeamInputData): Team!
+  }
+
+  extend type Query {
+    teams: [Team!]!
+  }
+
   type Team {
     _id: ID!
     name: String!
