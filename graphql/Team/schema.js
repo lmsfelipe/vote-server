@@ -17,10 +17,6 @@ module.exports = gql`
     city: String!
   }
 
-  type TeamData {
-    teams: [Team!]!
-  }
-
   input TeamInputData {
     name: String!
     slug: String!

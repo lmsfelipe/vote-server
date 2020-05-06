@@ -5,12 +5,14 @@ const Schema = mongoose.Schema;
 const voteShema = new Schema(
   {
     userId: {
-      type: String,
+      type: mongoose.Types.ObjectId,
       required: true,
+      ref: "User",
     },
     shirtId: {
-      type: String,
+      type: mongoose.Types.ObjectId,
       required: true,
+      ref: "Shirt",
     },
   },
   { timestamps: true }

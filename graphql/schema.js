@@ -1,11 +1,11 @@
 const { gql } = require("apollo-server-express");
 
-const team = require("./team");
-const shirt = require("./shirt");
-const user = require("./user");
-const vote = require("./vote");
+const ShirtSchema = require("./Shirt/schema");
+const User = require("./User/schema");
+const Team = require("./Team/schema");
+const Vote = require("./Vote/schema");
 
-const schema = gql`
+const Schema = gql`
   type Mutation {
     createTeam(teamInput: TeamInputData): Team!
     createShirt(shirtInput: ShirtInputData): Shirt!
@@ -20,8 +20,8 @@ const schema = gql`
   }
 
   type Subscription {
-    addedShirtVote: Shirt
+    shirtVoted: Shirt
   }
 `;
 
-module.exports = [schema, team, shirt, user, vote];
+module.exports = [Schema, Team, ShirtSchema, User, Vote];
