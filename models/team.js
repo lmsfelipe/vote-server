@@ -19,15 +19,15 @@ const teamSchema = new Schema(
     region: {
       country: {
         type: String,
-        require: true,
+        default: "Brasil",
       },
       state: {
         type: String,
-        require: true,
+        default: "São Paulo",
       },
       city: {
         type: String,
-        require: true,
+        default: "São Paulo",
       },
     },
   },
