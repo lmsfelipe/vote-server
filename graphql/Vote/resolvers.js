@@ -27,7 +27,7 @@ module.exports = {
       const vote = new Vote({ userId, shirtId });
       const voteData = await vote.save();
 
-      return { ...voteData._doc };
+      return voteData;
     },
   },
 };
