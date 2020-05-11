@@ -3,6 +3,8 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
   extend type Mutation {
     createTeam(teamInput: TeamInputData): Team!
+    editTeam(id: ID!, teamInput: TeamInputData): Team!
+    deleteTeam(id: ID!): Team!
   }
 
   extend type Query {
@@ -26,8 +28,8 @@ module.exports = gql`
   }
 
   input TeamInputData {
-    name: String!
-    slug: String!
-    image: String!
+    name: String
+    slug: String
+    image: String
   }
 `;
