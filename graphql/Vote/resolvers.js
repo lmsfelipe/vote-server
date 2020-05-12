@@ -1,10 +1,10 @@
-const { PubSub } = require("apollo-server-express");
+const { PubSub } = require('apollo-server-express');
 
-const Shirt = require("../../models/shirt");
-const Vote = require("../../models/vote");
+const Shirt = require('../../models/shirt');
+const Vote = require('../../models/vote');
 
 const pubsub = new PubSub();
-const ADDED_SHIRT_VOTE = "ADDED_SHIRT_VOTE";
+const ADDED_SHIRT_VOTE = 'ADDED_SHIRT_VOTE';
 
 module.exports = {
   Subscription: {
@@ -14,13 +14,13 @@ module.exports = {
   },
 
   Mutation: {
-    setVote: async function (parent, args) {
+    async setVote(parent, args) {
       const { userId, shirtId } = args;
       const shirt = await Shirt.findById(shirtId);
 
       shirt.votes += 1;
       await shirt.save();
-      const populatedData = await Shirt.populate(shirt, { path: "team" });
+      const populatedData = await Shirt.populate(shirt, { path: 'team' });
 
       pubsub.publish(ADDED_SHIRT_VOTE, { shirtVoted: populatedData });
 

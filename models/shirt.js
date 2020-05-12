@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const shirtSchema = new Schema(
   {
@@ -49,10 +49,10 @@ const shirtSchema = new Schema(
     team: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "Team",
+      ref: 'Team',
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-module.exports = mongoose.model("Shirt", shirtSchema);
+module.exports = mongoose.model('Shirt', shirtSchema);

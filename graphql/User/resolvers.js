@@ -1,33 +1,33 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const joi = require("@hapi/joi");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const joi = require('@hapi/joi');
 const {
   UserInputError,
   AuthenticationError,
   ApolloError,
-} = require("apollo-server-express");
+} = require('apollo-server-express');
 
-const User = require("../../models/user");
+const User = require('../../models/user');
 
 module.exports = {
   Query: {
-    login: async function (parent, { email, password }) {
+    async login(parent, { email, password }) {
       const schema = joi.object({
         email: joi.string().email().messages({
-          "string.email": "Formato de e-mail inválido.",
+          'string.email': 'Formato de e-mail inválido.',
         }),
         password: joi.string().messages({
-          "string.base": "Senha deve ser em campo de texto.",
+          'string.base': 'Senha deve ser em campo de texto.',
         }),
       });
 
       const { error } = schema.validate(
         { email, password },
-        { abortEarly: false }
+        { abortEarly: false },
       );
 
       if (error) {
-        throw new UserInputError("Houve um erro em um dos campos.", {
+        throw new UserInputError('Houve um erro em um dos campos.', {
           validationErrors: error.details,
           code: 422,
         });
@@ -35,9 +35,9 @@ module.exports = {
 
       const user = await User.findOne({ email });
       const authError = () => {
-        const error = new AuthenticationError("Usuário não encontrado.");
-        error.code = 401;
-        throw error;
+        const authErr = new AuthenticationError('Usuário não encontrado.');
+        authErr.code = 401;
+        throw authErr;
       };
       if (!user) {
         authError();
@@ -54,8 +54,8 @@ module.exports = {
           userId,
           email,
         },
-        "mysupersecret",
-        { expiresIn: "1h" }
+        'mysupersecret',
+        { expiresIn: '1h' },
       );
 
       return {
@@ -66,25 +66,25 @@ module.exports = {
   },
 
   Mutation: {
-    createUser: async function (parent, { userInput }) {
+    async createUser(parent, { userInput }) {
       const { name, email, password } = userInput;
 
       const schema = joi.object({
         name: joi.string().min(3).max(30).required().messages({
-          "string.base": "Nome deve ser um capo de texto.",
-          "string.min": `Nome precisa ter no mínimo {#limit} caracteres.`,
-          "string.max": `Nome precisa ter no máximo {#limit} caracteres.`,
+          'string.base': 'Nome deve ser um capo de texto.',
+          'string.min': 'Nome precisa ter no mínimo {#limit} caracteres.',
+          'string.max': 'Nome precisa ter no máximo {#limit} caracteres.',
         }),
         email: joi.string().email().required().messages({
-          "string.base": "Email deve ser um campo de texto.",
-          "string.email": "Formato de e-mail inválido.",
+          'string.base': 'Email deve ser um campo de texto.',
+          'string.email': 'Formato de e-mail inválido.',
         }),
         password: joi
           .string()
-          .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
+          .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
           .required()
           .messages({
-            "string.pattern.base": "Formato de senha inválido.",
+            'string.pattern.base': 'Formato de senha inválido.',
           }),
       });
 
@@ -94,17 +94,17 @@ module.exports = {
 
       if (error) {
         throw new UserInputError(
-          "Por favor, verifique os campos preenchidos.",
+          'Por favor, verifique os campos preenchidos.',
           {
             validationErrors: error.details,
             code: 422,
-          }
+          },
         );
       }
 
       const hasEmail = await User.findOne({ email });
       if (hasEmail) {
-        throw new UserInputError("Email already in use");
+        throw new UserInputError('Email already in use');
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
@@ -113,20 +113,20 @@ module.exports = {
       let createUser = {};
       try {
         createUser = await user.save();
-      } catch (error) {
-        throw new ApolloError("Não foi possível criar o usuário.", 400);
+      } catch (err) {
+        throw new ApolloError('Não foi possível criar o usuário.', 400);
       }
 
       return createUser;
     },
 
-    editUser: async function (parent, { id, userInput }) {
+    async editUser(parent, { id, userInput }) {
       let user = {};
 
       const schema = joi.object({
         name: joi.string().min(3).max(30),
         email: joi.string().email(),
-        password: joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
+        password: joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
       });
 
       const { error } = schema.validate(userInput, {
@@ -135,11 +135,11 @@ module.exports = {
 
       if (error) {
         throw new UserInputError(
-          "Por favor, verifique os campos preenchidos.",
+          'Por favor, verifique os campos preenchidos.',
           {
             validationErrors: error.details,
             code: 422,
-          }
+          },
         );
       }
 
@@ -147,8 +147,8 @@ module.exports = {
         user = await User.findByIdAndUpdate(id, userInput, {
           new: true,
         });
-      } catch (error) {
-        throw new ApolloError("Não foi possível editar o usuário.", 400);
+      } catch (err) {
+        throw new ApolloError('Não foi possível editar o usuário.', 400);
       }
 
       return user;

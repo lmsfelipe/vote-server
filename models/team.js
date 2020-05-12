@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const teamSchema = new Schema(
   {
@@ -19,19 +19,19 @@ const teamSchema = new Schema(
     region: {
       country: {
         type: String,
-        default: "Brasil",
+        default: 'Brasil',
       },
       state: {
         type: String,
-        default: "São Paulo",
+        default: 'São Paulo',
       },
       city: {
         type: String,
-        default: "São Paulo",
+        default: 'São Paulo',
       },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-module.exports = mongoose.model("Team", teamSchema);
+module.exports = mongoose.model('Team', teamSchema);

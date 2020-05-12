@@ -1,11 +1,11 @@
-const joi = require("@hapi/joi");
-const { UserInputError, ApolloError } = require("apollo-server-express");
+const joi = require('@hapi/joi');
+const { UserInputError, ApolloError } = require('apollo-server-express');
 
-const Team = require("../../models/team");
+const Team = require('../../models/team');
 
 module.exports = {
   Query: {
-    teams: async function () {
+    async teams() {
       const teams = await Team.find();
 
       return teams;
@@ -13,26 +13,26 @@ module.exports = {
   },
 
   Mutation: {
-    createTeam: async function (parent, { teamInput }) {
+    async createTeam(parent, { teamInput }) {
       const schema = joi.object({
         name: joi.string().min(3).max(30).required().messages({
-          "string.base": "Nome deve ser um capo de texto.",
-          "string.min": `Nome precisa ter no mínimo {#limit} caracteres.`,
-          "string.max": `Nome precisa ter no máximo {#limit} caracteres.`,
+          'string.base': 'Nome deve ser um capo de texto.',
+          'string.min': 'Nome precisa ter no mínimo {#limit} caracteres.',
+          'string.max': 'Nome precisa ter no máximo {#limit} caracteres.',
         }),
         slug: joi.string().required().messages({
-          "string.base": "Slug deve ser um campo de texto.",
+          'string.base': 'Slug deve ser um campo de texto.',
         }),
         image: joi.string().uri().required().messages({
-          "string.base": "Imagem deve ser um campo de texto.",
-          "string.uri": "Imagem deve ser uma uri.",
+          'string.base': 'Imagem deve ser um campo de texto.',
+          'string.uri': 'Imagem deve ser uma uri.',
         }),
       });
 
       const { error } = schema.validate(teamInput, { abortEarly: false });
 
       if (error) {
-        throw new UserInputError("Houve um erro em um dos campos", {
+        throw new UserInputError('Houve um erro em um dos campos', {
           validationErrors: error.details,
           code: 422,
         });
@@ -42,14 +42,14 @@ module.exports = {
       let createTeam = {};
       try {
         createTeam = await team.save();
-      } catch (error) {
-        throw new ApolloError("Não foi possível criar o time.", 400);
+      } catch (err) {
+        throw new ApolloError('Não foi possível criar o time.', 400);
       }
 
       return createTeam;
     },
 
-    editTeam: async function (parent, { id, teamInput }) {
+    async editTeam(parent, { id, teamInput }) {
       let team = {};
 
       const schema = joi.object({
@@ -61,7 +61,7 @@ module.exports = {
       const { error } = schema.validate(teamInput, { abortEarly: false });
 
       if (error) {
-        throw new UserInputError("Houve um erro em um dos campos", {
+        throw new UserInputError('Houve um erro em um dos campos', {
           validationErrors: error.details,
           code: 422,
         });
@@ -71,21 +71,21 @@ module.exports = {
         team = await Team.findByIdAndUpdate(id, teamInput, {
           new: true,
         });
-      } catch (error) {
-        throw new ApolloError("Não foi possível editar o time.", 400);
+      } catch (err) {
+        throw new ApolloError('Não foi possível editar o time.', 400);
       }
 
       return team;
     },
 
-    deleteTeam: async function (parent, { id }) {
+    async deleteTeam(parent, { id }) {
       const deletedTeam = await Team.findByIdAndDelete(id);
 
       if (deletedTeam) {
         return deletedTeam;
       }
 
-      throw new ApolloError("Não foi possível remover o time.", 400);
+      throw new ApolloError('Não foi possível remover o time.', 400);
     },
   },
 };
