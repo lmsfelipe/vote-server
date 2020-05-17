@@ -6,12 +6,17 @@ const mongoose = require('mongoose');
 
 const schema = require('./graphql/schema');
 const resolvers = require('./graphql/resolvers');
+const auth = require('./utils/auth');
 
 const app = express();
 
 app.use(bodyParser.json());
 
-const server = new ApolloServer({ typeDefs: schema, resolvers });
+const server = new ApolloServer({
+  typeDefs: schema,
+  resolvers,
+  context: ({ req }) => ({ authScope: auth(req) }),
+});
 server.applyMiddleware({ app });
 
 const httpServer = http.createServer(app);

@@ -8,6 +8,7 @@ const {
 } = require('apollo-server-express');
 
 const User = require('../../models/user');
+const { checkAuthentication } = require('../../utils/authChecks');
 
 module.exports = {
   Query: {
@@ -120,7 +121,8 @@ module.exports = {
       return createUser;
     },
 
-    async editUser(parent, { id, userInput }) {
+    async editUser(parent, { id, userInput }, context) {
+      checkAuthentication(context);
       let user = {};
 
       const schema = joi.object({

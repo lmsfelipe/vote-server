@@ -2,6 +2,7 @@ const joi = require('@hapi/joi');
 const { UserInputError, ApolloError } = require('apollo-server-express');
 
 const Shirt = require('../../models/shirt');
+const { checkAuthentication } = require('../../utils/authChecks');
 
 module.exports = {
   Query: {
@@ -12,8 +13,9 @@ module.exports = {
     },
   },
   Mutation: {
-    async createShirt(parent, { shirtInput }) {
+    async createShirt(parent, { shirtInput }, context) {
       const { name, slug, mainImage, teamId, year, brand, images } = shirtInput;
+      checkAuthentication(context);
 
       const schema = joi.object({
         name: joi.string().min(3).max(30).required().messages({
@@ -72,7 +74,9 @@ module.exports = {
       return createShirt;
     },
 
-    async editShirt(parent, { id, shirtInput }) {
+    async editShirt(parent, { id, shirtInput }, context) {
+      checkAuthentication(context);
+
       const schema = joi.object({
         name: joi.string().min(3).max(30),
         slug: joi.string(),
@@ -100,6 +104,7 @@ module.exports = {
       try {
         editedShirt = await Shirt.findByIdAndUpdate(id, shirtInput, {
           new: true,
+          useFindAndModify: false,
         });
       } catch (err) {
         throw new ApolloError('Não foi possível editar a camisa.', 400);
@@ -108,7 +113,8 @@ module.exports = {
       return editedShirt;
     },
 
-    async deleteShirt(parent, { id }) {
+    async deleteShirt(parent, { id }, context) {
+      checkAuthentication(context);
       const deletedShirt = await Shirt.findByIdAndDelete(id);
 
       if (deletedShirt) {

@@ -2,6 +2,7 @@ const joi = require('@hapi/joi');
 const { UserInputError, ApolloError } = require('apollo-server-express');
 
 const Team = require('../../models/team');
+const { checkAuthentication } = require('../../utils/authChecks');
 
 module.exports = {
   Query: {
@@ -13,7 +14,9 @@ module.exports = {
   },
 
   Mutation: {
-    async createTeam(parent, { teamInput }) {
+    async createTeam(parent, { teamInput }, context) {
+      checkAuthentication(context);
+
       const schema = joi.object({
         name: joi.string().min(3).max(30).required().messages({
           'string.base': 'Nome deve ser um capo de texto.',
@@ -49,8 +52,8 @@ module.exports = {
       return createTeam;
     },
 
-    async editTeam(parent, { id, teamInput }) {
-      let team = {};
+    async editTeam(parent, { id, teamInput }, context) {
+      checkAuthentication(context);
 
       const schema = joi.object({
         name: joi.string().min(3).max(30),
@@ -67,25 +70,34 @@ module.exports = {
         });
       }
 
+      let editedTeam = {};
+      const reqError = new ApolloError('Não foi possível editar o time.', 400);
+
       try {
-        team = await Team.findByIdAndUpdate(id, teamInput, {
+        editedTeam = await Team.findByIdAndUpdate(id, teamInput, {
           new: true,
+          useFindAndModify: false,
         });
       } catch (err) {
-        throw new ApolloError('Não foi possível editar o time.', 400);
+        throw reqError;
       }
 
-      return team;
+      if (!editedTeam) {
+        throw reqError;
+      }
+
+      return editedTeam;
     },
 
-    async deleteTeam(parent, { id }) {
+    async deleteTeam(parent, { id }, context) {
+      checkAuthentication(context);
       const deletedTeam = await Team.findByIdAndDelete(id);
 
-      if (deletedTeam) {
-        return deletedTeam;
+      if (!deletedTeam) {
+        throw new ApolloError('Não foi possível remover o time.', 400);
       }
 
-      throw new ApolloError('Não foi possível remover o time.', 400);
+      return deletedTeam;
     },
   },
 };
