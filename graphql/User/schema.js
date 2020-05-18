@@ -10,11 +10,17 @@ module.exports = gql`
     login(email: String!, password: String!): AuthData!
   }
 
+  enum Role {
+    admin
+    user
+  }
+
   type User {
     _id: ID!
     name: String!
     email: String!
     password: String!
+    role: Role!
   }
 
   input UserInputData {

@@ -20,5 +20,7 @@ module.exports = (req) => {
     return { isAuth: false };
   }
 
-  return { isAuth: true, userId: decodedToken.userId };
+  const { userId, role } = decodedToken;
+
+  return { isAuth: true, userId, role };
 };

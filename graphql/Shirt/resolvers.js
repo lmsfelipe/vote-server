@@ -2,7 +2,10 @@ const joi = require('@hapi/joi');
 const { UserInputError, ApolloError } = require('apollo-server-express');
 
 const Shirt = require('../../models/shirt');
-const { checkAuthentication } = require('../../utils/authChecks');
+const {
+  checkAuthentication,
+  checkAuthorization,
+} = require('../../utils/authChecks');
 
 module.exports = {
   Query: {
@@ -16,6 +19,7 @@ module.exports = {
     async createShirt(parent, { shirtInput }, context) {
       const { name, slug, mainImage, teamId, year, brand, images } = shirtInput;
       checkAuthentication(context);
+      checkAuthorization(context);
 
       const schema = joi.object({
         name: joi.string().min(3).max(30).required().messages({
@@ -76,6 +80,7 @@ module.exports = {
 
     async editShirt(parent, { id, shirtInput }, context) {
       checkAuthentication(context);
+      checkAuthorization(context);
 
       const schema = joi.object({
         name: joi.string().min(3).max(30),
@@ -115,6 +120,8 @@ module.exports = {
 
     async deleteShirt(parent, { id }, context) {
       checkAuthentication(context);
+      checkAuthorization(context);
+
       const deletedShirt = await Shirt.findByIdAndDelete(id);
 
       if (deletedShirt) {

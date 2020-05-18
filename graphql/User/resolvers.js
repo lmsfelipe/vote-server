@@ -50,10 +50,11 @@ module.exports = {
       }
 
       const userId = user._id.toString();
+      const { role } = user;
       const token = jwt.sign(
         {
           userId,
-          email,
+          role,
         },
         'mysupersecret',
         { expiresIn: '1h' },

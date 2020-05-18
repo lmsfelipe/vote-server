@@ -2,7 +2,10 @@ const joi = require('@hapi/joi');
 const { UserInputError, ApolloError } = require('apollo-server-express');
 
 const Team = require('../../models/team');
-const { checkAuthentication } = require('../../utils/authChecks');
+const {
+  checkAuthentication,
+  checkAuthorization,
+} = require('../../utils/authChecks');
 
 module.exports = {
   Query: {
@@ -16,6 +19,7 @@ module.exports = {
   Mutation: {
     async createTeam(parent, { teamInput }, context) {
       checkAuthentication(context);
+      checkAuthorization(context);
 
       const schema = joi.object({
         name: joi.string().min(3).max(30).required().messages({
@@ -54,6 +58,7 @@ module.exports = {
 
     async editTeam(parent, { id, teamInput }, context) {
       checkAuthentication(context);
+      checkAuthorization(context);
 
       const schema = joi.object({
         name: joi.string().min(3).max(30),
@@ -91,6 +96,7 @@ module.exports = {
 
     async deleteTeam(parent, { id }, context) {
       checkAuthentication(context);
+      checkAuthorization(context);
       const deletedTeam = await Team.findByIdAndDelete(id);
 
       if (!deletedTeam) {
