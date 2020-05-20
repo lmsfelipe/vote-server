@@ -10,6 +10,8 @@ const {
 const User = require('../../models/user');
 const { checkAuthentication } = require('../../utils/authChecks');
 
+const jwtSecret = process.env.JWT_SECRET;
+
 module.exports = {
   Query: {
     async login(parent, { email, password }) {
@@ -56,7 +58,7 @@ module.exports = {
           userId,
           role,
         },
-        'mysupersecret',
+        jwtSecret,
         { expiresIn: '1h' },
       );
 

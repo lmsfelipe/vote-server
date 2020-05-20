@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 
+const jwtSecret = process.env.JWT_SECRET;
+
 module.exports = (req) => {
   const authHeader = req.headers.authorization;
 
@@ -11,7 +13,7 @@ module.exports = (req) => {
   let decodedToken;
 
   try {
-    decodedToken = jwt.verify(token, 'mysupersecret');
+    decodedToken = jwt.verify(token, jwtSecret);
   } catch (err) {
     return { isAuth: false };
   }
