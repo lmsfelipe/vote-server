@@ -1,22 +1,39 @@
 const joi = require('@hapi/joi');
 const { UserInputError, ApolloError } = require('apollo-server-express');
 
-const Shirt = require('../../models/shirt');
 const {
   checkAuthentication,
   checkAuthorization,
-} = require('../../utils/authChecks');
+} = require('../../utils/auth-checks');
 
 module.exports = {
   Query: {
-    async shirts() {
-      const shirts = await Shirt.find().populate('team');
+    async shirts(_, __, { models }) {
+      const shirts = await models.Shirt.find();
 
       return shirts;
     },
+
+    async shirtById(_, { id }, { loaders }) {
+      const { shirtsLoader } = loaders;
+      const shirt = await shirtsLoader.load(id);
+
+      return shirt;
+    },
   },
+
+  Shirt: {
+    async team(shirt, _, { loaders }) {
+      const { teamsLoader } = loaders;
+      const shirtId = shirt.team._id.toString();
+      const team = await teamsLoader.load(shirtId);
+
+      return team;
+    },
+  },
+
   Mutation: {
-    async createShirt(parent, { shirtInput }, context) {
+    async createShirt(_, { shirtInput }, context) {
       const { name, slug, mainImage, teamId, year, brand, images } = shirtInput;
       checkAuthentication(context);
       checkAuthorization(context);
@@ -57,7 +74,7 @@ module.exports = {
           code: 422,
         });
       }
-
+      const { Shirt } = context.models;
       const shirt = new Shirt({
         name,
         slug,
@@ -78,7 +95,7 @@ module.exports = {
       return createShirt;
     },
 
-    async editShirt(parent, { id, shirtInput }, context) {
+    async editShirt(_, { id, shirtInput }, context) {
       checkAuthentication(context);
       checkAuthorization(context);
 
@@ -104,10 +121,12 @@ module.exports = {
         });
       }
 
+      const { Shirt } = context.models;
+      const payload = { ...shirtInput, team: shirtInput.teamId };
       let editedShirt = {};
 
       try {
-        editedShirt = await Shirt.findByIdAndUpdate(id, shirtInput, {
+        editedShirt = await Shirt.findByIdAndUpdate(id, payload, {
           new: true,
           useFindAndModify: false,
         });
@@ -118,10 +137,11 @@ module.exports = {
       return editedShirt;
     },
 
-    async deleteShirt(parent, { id }, context) {
+    async deleteShirt(_, { id }, context) {
       checkAuthentication(context);
       checkAuthorization(context);
 
+      const { Shirt } = context.models;
       const deletedShirt = await Shirt.findByIdAndDelete(id);
 
       if (deletedShirt) {

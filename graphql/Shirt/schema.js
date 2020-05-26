@@ -9,6 +9,7 @@ module.exports = gql`
 
   extend type Query {
     shirts: [Shirt!]!
+    shirtById(id: ID!): Shirt!
   }
 
   type Shirt {

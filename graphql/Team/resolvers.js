@@ -1,23 +1,22 @@
 const joi = require('@hapi/joi');
 const { UserInputError, ApolloError } = require('apollo-server-express');
 
-const Team = require('../../models/team');
 const {
   checkAuthentication,
   checkAuthorization,
-} = require('../../utils/authChecks');
+} = require('../../utils/auth-checks');
 
 module.exports = {
   Query: {
-    async teams() {
-      const teams = await Team.find();
+    async teams(_, __, { models }) {
+      const teams = await models.Team.find();
 
       return teams;
     },
   },
 
   Mutation: {
-    async createTeam(parent, { teamInput }, context) {
+    async createTeam(_, { teamInput }, context) {
       checkAuthentication(context);
       checkAuthorization(context);
 
@@ -45,8 +44,10 @@ module.exports = {
         });
       }
 
+      const { Team } = context.models;
       const team = new Team(teamInput);
       let createTeam = {};
+
       try {
         createTeam = await team.save();
       } catch (err) {
@@ -75,8 +76,9 @@ module.exports = {
         });
       }
 
-      let editedTeam = {};
+      const { Team } = context.models;
       const reqError = new ApolloError('Não foi possível editar o time.', 400);
+      let editedTeam = {};
 
       try {
         editedTeam = await Team.findByIdAndUpdate(id, teamInput, {
@@ -97,6 +99,8 @@ module.exports = {
     async deleteTeam(parent, { id }, context) {
       checkAuthentication(context);
       checkAuthorization(context);
+
+      const { Team } = context.models;
       const deletedTeam = await Team.findByIdAndDelete(id);
 
       if (!deletedTeam) {

@@ -7,14 +7,13 @@ const {
   ApolloError,
 } = require('apollo-server-express');
 
-const User = require('../../models/user');
-const { checkAuthentication } = require('../../utils/authChecks');
+const { checkAuthentication } = require('../../utils/auth-checks');
 
 const jwtSecret = process.env.JWT_SECRET;
 
 module.exports = {
   Query: {
-    async login(parent, { email, password }) {
+    async login(_, { email, password }, { models }) {
       const schema = joi.object({
         email: joi.string().email().messages({
           'string.email': 'Formato de e-mail inválido.',
@@ -36,7 +35,7 @@ module.exports = {
         });
       }
 
-      const user = await User.findOne({ email });
+      const user = await models.User.findOne({ email });
       const authError = () => {
         const authErr = new AuthenticationError('Usuário não encontrado.');
         authErr.code = 401;
@@ -70,7 +69,7 @@ module.exports = {
   },
 
   Mutation: {
-    async createUser(parent, { userInput }) {
+    async createUser(parent, { userInput }, { models }) {
       const { name, email, password } = userInput;
 
       const schema = joi.object({
@@ -106,6 +105,7 @@ module.exports = {
         );
       }
 
+      const { User } = models;
       const hasEmail = await User.findOne({ email });
       if (hasEmail) {
         throw new UserInputError('Email already in use');
@@ -148,6 +148,7 @@ module.exports = {
         );
       }
 
+      const { User } = context.models;
       try {
         user = await User.findByIdAndUpdate(id, userInput, {
           new: true,
