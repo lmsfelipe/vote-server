@@ -1,0 +1,86 @@
+query login {
+  login(email: "felipe@email.com", password: "12345") {
+    token
+  }
+}
+
+mutation setVote {
+  setVote(shirtId: "5e9fa158fab8bb003e9e553e") {
+    userId
+  }
+}
+
+query allShirts {
+  shirts {
+    _id
+    name
+    team {
+      _id
+      name
+    }
+  }
+}
+
+query shirtById {
+  shirtById(id: "5e9fa246fab8bb003e9e5540") {
+    name
+    team {
+      name
+    }
+  }
+}
+
+mutation createShirt {
+  createShirt(
+    shirtInput: {
+      name: "camisa 4"
+      slug: "camise-4"
+      mainImage: "https://lh3.googleusercontent.com/0n9M3fVSxotcbImjLYEMyxn_VXk2gQZXA-TehM2p7SodroSZ2U9OGI0acenNAMIug0qpwh8a9iWoDzHQ2vqI5zpF"
+      year: 2010
+      brand: "adidas"
+      images: [{ url: "https://google.com.br", name: "Imagem 1" }]
+      teamId: "5e9e3f6fb9454c001f7efd46"
+    }
+  ) {
+    name
+    team {
+      name
+    }
+  }
+}
+
+mutation editShirt {
+  editShirt(
+    id: "5ecc6cd18fa0ae00e38fbd1e"
+    shirtInput: {
+      name: "Camisa 3"
+      brand: "adidas"
+      teamId: "5ecc679b8b48b4008fc342b5"
+    }
+  ) {
+    name
+    brand
+    team {
+      name
+    }
+  }
+}
+
+query allTeams {
+  teams {
+    _id
+    name
+  }
+}
+
+mutation createTeam {
+  createTeam(
+    teamInput: {
+      name: "Gremio"
+      slug: "Gremio"
+      image: "https://gremio.com.br/image.jpg"
+    }
+  ) {
+    name
+  }
+}
