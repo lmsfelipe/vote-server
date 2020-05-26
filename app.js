@@ -1,14 +1,18 @@
+require('dotenv/config');
+
 const http = require('http');
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv/config');
 
 const schema = require('./graphql/schema');
 const resolvers = require('./graphql/resolvers');
 const auth = require('./utils/auth');
+const teamsLoader = require('./graphql/Team/loader');
+const shirtsLoader = require('./graphql/Shirt/loader');
+const models = require('./models');
 
 const app = express();
 
@@ -18,7 +22,14 @@ app.use(cors());
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
-  context: ({ req }) => ({ authScope: auth(req) }),
+  context: ({ req }) => ({
+    models,
+    authScope: auth(req),
+    loaders: {
+      teamsLoader: teamsLoader(),
+      shirtsLoader: shirtsLoader(),
+    },
+  }),
 });
 server.applyMiddleware({ app });
 
