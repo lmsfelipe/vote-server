@@ -32,7 +32,7 @@ module.exports = {
 
       pubsub.publish(ADDED_SHIRT_VOTE, { shirtVoted: populatedData });
 
-      const { userId } = context.authScope.userId;
+      const { userId } = context.authScope;
       const vote = new Vote({ userId, shirtId });
       const voteData = await vote.save();
 

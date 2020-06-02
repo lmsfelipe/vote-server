@@ -11,12 +11,17 @@ module.exports = {
     async shirts(_, __, { models }) {
       const shirts = await models.Shirt.find();
 
+      if (!shirts) return [];
+
       return shirts;
     },
 
     async shirtById(_, { id }, { loaders }) {
       const { shirtsLoader } = loaders;
+      if (!id) throw new ApolloError('O campo ID é obrigatório', 400);
+
       const shirt = await shirtsLoader.load(id);
+      if (!shirt) throw new ApolloError('Nenhuma camisa foi encontrada', 404);
 
       return shirt;
     },
@@ -25,8 +30,12 @@ module.exports = {
   Shirt: {
     async team(shirt, _, { loaders }) {
       const { teamsLoader } = loaders;
-      const shirtId = shirt.team._id.toString();
+      const id = shirt.team._id;
+      if (!id) throw new ApolloError('O campo ID é obrigatório', 400);
+
+      const shirtId = id.toString();
       const team = await teamsLoader.load(shirtId);
+      if (!team) throw new ApolloError('Nenhum time foi encontrado', 404);
 
       return team;
     },
@@ -89,7 +98,7 @@ module.exports = {
       try {
         createShirt = await shirt.save();
       } catch (err) {
-        throw new ApolloError('Não foi criar a camisa.', 400);
+        throw new ApolloError('Não foi possível criar a camisa.', 400);
       }
 
       return createShirt;
@@ -122,7 +131,10 @@ module.exports = {
       }
 
       const { Shirt } = context.models;
-      const payload = { ...shirtInput, team: shirtInput.teamId };
+      const payload = {
+        ...shirtInput,
+        ...(shirtInput.teamId && { team: shirtInput.teamId }),
+      };
       let editedShirt = {};
 
       try {
