@@ -17,13 +17,6 @@ describe('[Query.shirts]', () => {
     expect(res).toEqual([{ name: 'Camisa 1' }]);
   });
 
-  it('returns empty array if no response', async () => {
-    find.mockReturnValueOnce([]);
-
-    const res = await shirts(null, null, mockContext);
-    expect(res).toEqual([]);
-  });
-
   it('returns empty array when response is null', async () => {
     find.mockReturnValueOnce(null);
 

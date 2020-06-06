@@ -33,8 +33,8 @@ module.exports = {
       const id = shirt.team._id;
       if (!id) throw new ApolloError('O campo ID é obrigatório', 400);
 
-      const shirtId = id.toString();
-      const team = await teamsLoader.load(shirtId);
+      const teamId = id.toString();
+      const team = await teamsLoader.load(teamId);
       if (!team) throw new ApolloError('Nenhum time foi encontrado', 404);
 
       return team;
@@ -83,6 +83,7 @@ module.exports = {
           code: 422,
         });
       }
+
       const { Shirt } = context.models;
       const shirt = new Shirt({
         name,
@@ -137,6 +138,10 @@ module.exports = {
       };
       let editedShirt = {};
 
+      if (!id) {
+        throw new ApolloError('Id é obrigatório.', 400);
+      }
+
       try {
         editedShirt = await Shirt.findByIdAndUpdate(id, payload, {
           new: true,
@@ -152,6 +157,10 @@ module.exports = {
     async deleteShirt(_, { id }, context) {
       checkAuthentication(context);
       checkAuthorization(context);
+
+      if (!id) {
+        throw new ApolloError('Id é obrigatório.', 400);
+      }
 
       const { Shirt } = context.models;
       const deletedShirt = await Shirt.findByIdAndDelete(id);
