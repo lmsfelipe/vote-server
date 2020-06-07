@@ -11,7 +11,20 @@ module.exports = {
     async teams(_, __, { models }) {
       const teams = await models.Team.find();
 
+      if (!teams) return [];
+
       return teams;
+    },
+
+    async teamById(_, { id }, { loaders }) {
+      const { teamsLoader } = loaders;
+      if (!id) throw new ApolloError('O campo ID é obrigatório', 400);
+
+      const teamId = id.toString();
+      const team = await teamsLoader.load(teamId);
+      if (!team) throw new ApolloError('Nenhum time foi encontrado', 404);
+
+      return team;
     },
   },
 
@@ -61,6 +74,10 @@ module.exports = {
       checkAuthentication(context);
       checkAuthorization(context);
 
+      if (!id) {
+        throw new ApolloError('Id é obrigatório.', 400);
+      }
+
       const schema = joi.object({
         name: joi.string().min(3).max(30),
         slug: joi.string(),
@@ -99,6 +116,10 @@ module.exports = {
     async deleteTeam(parent, { id }, context) {
       checkAuthentication(context);
       checkAuthorization(context);
+
+      if (!id) {
+        throw new ApolloError('Id é obrigatório.', 400);
+      }
 
       const { Team } = context.models;
       const deletedTeam = await Team.findByIdAndDelete(id);

@@ -109,6 +109,10 @@ module.exports = {
       checkAuthentication(context);
       checkAuthorization(context);
 
+      if (!id) {
+        throw new ApolloError('Id é obrigatório.', 400);
+      }
+
       const schema = joi.object({
         name: joi.string().min(3).max(30),
         slug: joi.string(),
@@ -131,16 +135,17 @@ module.exports = {
         });
       }
 
-      const { Shirt } = context.models;
       const payload = {
         ...shirtInput,
         ...(shirtInput.teamId && { team: shirtInput.teamId }),
       };
-      let editedShirt = {};
 
-      if (!id) {
-        throw new ApolloError('Id é obrigatório.', 400);
-      }
+      const { Shirt } = context.models;
+      let editedShirt = {};
+      const reqError = new ApolloError(
+        'Não foi possível editar a camisa.',
+        400,
+      );
 
       try {
         editedShirt = await Shirt.findByIdAndUpdate(id, payload, {
@@ -148,7 +153,11 @@ module.exports = {
           useFindAndModify: false,
         });
       } catch (err) {
-        throw new ApolloError('Não foi possível editar a camisa.', 400);
+        throw reqError;
+      }
+
+      if (!editedShirt) {
+        throw reqError;
       }
 
       return editedShirt;

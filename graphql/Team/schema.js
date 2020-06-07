@@ -9,6 +9,7 @@ module.exports = gql`
 
   extend type Query {
     teams: [Team!]!
+    teamById(id: ID!): Team!
   }
 
   type Team {
