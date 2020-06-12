@@ -8,9 +8,9 @@ const ADDED_SHIRT_VOTE = 'ADDED_SHIRT_VOTE';
 module.exports = {
   Subscription: {
     shirtVoted: {
-      subscribe: (_, __, context) => {
-        checkAuthentication(context);
-        pubsub.asyncIterator([ADDED_SHIRT_VOTE]);
+      subscribe: () => {
+        const asyncIterator = pubsub.asyncIterator([ADDED_SHIRT_VOTE]);
+        return asyncIterator;
       },
     },
   },
@@ -19,21 +19,26 @@ module.exports = {
     async setVote(_, { shirtId }, context) {
       checkAuthentication(context);
 
-      const { Shirt, Vote } = context.models;
-      const shirt = await Shirt.findById(shirtId);
+      const { Vote } = context.models;
+      const { teamsLoader, shirtsLoader } = context.loaders;
+      const shirt = await shirtsLoader.load(shirtId);
 
       if (!shirt) {
         throw new ApolloError('Camisa não encontrada.', 400);
       }
 
       shirt.votes += 1;
-      await shirt.save();
-      const populatedData = await Shirt.populate(shirt, { path: 'team' });
+      const shirtRes = await shirt.save();
+      const teamRes = await teamsLoader.load(shirtRes.team);
 
-      pubsub.publish(ADDED_SHIRT_VOTE, { shirtVoted: populatedData });
+      const populatedShirt = {
+        ...shirtRes._doc,
+        team: teamRes,
+      };
 
+      pubsub.publish(ADDED_SHIRT_VOTE, { shirtVoted: populatedShirt });
       const { userId } = context.authScope;
-      const vote = new Vote({ userId, shirtId });
+      const vote = new Vote({ userId, shirtId, votes: shirtRes.votes });
       const voteData = await vote.save();
 
       return voteData;

@@ -14,6 +14,10 @@ const voteShema = new Schema(
       required: true,
       ref: 'Shirt',
     },
+    votes: {
+      type: Number,
+      required: true,
+    },
   },
   { timestamps: true },
 );

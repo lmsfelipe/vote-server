@@ -13,6 +13,7 @@ module.exports = gql`
     _id: ID!
     userId: String!
     shirtId: String!
+    votes: Int!
     createdAt: String!
     updatedAt: String!
   }
