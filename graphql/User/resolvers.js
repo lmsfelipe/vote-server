@@ -41,6 +41,7 @@ module.exports = {
         authErr.code = 401;
         throw authErr;
       };
+
       if (!user) {
         authError();
       }
@@ -69,7 +70,7 @@ module.exports = {
   },
 
   Mutation: {
-    async createUser(parent, { userInput }, { models }) {
+    async createUser(_, { userInput }, { models }) {
       const { name, email, password } = userInput;
 
       const schema = joi.object({
@@ -108,7 +109,7 @@ module.exports = {
       const { User } = models;
       const hasEmail = await User.findOne({ email });
       if (hasEmail) {
-        throw new UserInputError('Email already in use');
+        throw new UserInputError('Esse e-mail já está em uso.');
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
@@ -124,9 +125,12 @@ module.exports = {
       return createUser;
     },
 
-    async editUser(parent, { id, userInput }, context) {
+    async editUser(_, { id, userInput }, context) {
       checkAuthentication(context);
-      let user = {};
+
+      if (!id) {
+        throw new ApolloError('Id é obrigatório.', 400);
+      }
 
       const schema = joi.object({
         name: joi.string().min(3).max(30),
@@ -149,12 +153,22 @@ module.exports = {
       }
 
       const { User } = context.models;
+      let user = {};
+      const reqError = new ApolloError(
+        'Não foi possível editar o usuário.',
+        400,
+      );
+
       try {
         user = await User.findByIdAndUpdate(id, userInput, {
           new: true,
         });
       } catch (err) {
-        throw new ApolloError('Não foi possível editar o usuário.', 400);
+        throw reqError;
+      }
+
+      if (!user) {
+        throw reqError;
       }
 
       return user;

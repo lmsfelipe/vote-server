@@ -22,14 +22,27 @@ app.use(cors());
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
-  context: ({ req }) => ({
-    models,
-    authScope: auth(req),
-    loaders: {
-      teamsLoader: teamsLoader(),
-      shirtsLoader: shirtsLoader(),
-    },
-  }),
+  context: ({ req, connection }) => {
+    if (connection) {
+      return {
+        ...connection.context,
+        models,
+        loaders: {
+          teamsLoader: teamsLoader(),
+          shirtsLoader: shirtsLoader(),
+        },
+      };
+    }
+
+    return {
+      models,
+      authScope: auth(req),
+      loaders: {
+        teamsLoader: teamsLoader(),
+        shirtsLoader: shirtsLoader(),
+      },
+    };
+  },
 });
 server.applyMiddleware({ app });
 
