@@ -1,4 +1,4 @@
-const resolvers = require('../resolvers');
+const resolvers = require('../user');
 const mongoMemoryServer = require('../../../utils/mongo-memory-server');
 const models = require('../../../models');
 

@@ -1,9 +1,9 @@
 const { gql } = require('apollo-server-express');
 
-const Shirt = require('./Shirt/schema');
-const User = require('./User/schema');
-const Team = require('./Team/schema');
-const Vote = require('./Vote/schema');
+const Shirt = require('./shirt');
+const User = require('./user');
+const Team = require('./team');
+const Vote = require('./vote');
 
 const RootSchema = gql`
   type Mutation {

@@ -10,8 +10,7 @@ const cors = require('cors');
 const schema = require('./graphql/schema');
 const resolvers = require('./graphql/resolvers');
 const auth = require('./utils/auth');
-const teamsLoader = require('./graphql/Team/loader');
-const shirtsLoader = require('./graphql/Shirt/loader');
+const { shirtsLoader, teamsLoader } = require('./dataloaders');
 const models = require('./models');
 
 const app = express();

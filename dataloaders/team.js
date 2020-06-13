@@ -1,7 +1,7 @@
 const DataLoader = require('dataloader');
 
-const Team = require('../../models/team');
-const { groupById } = require('../../utils/helpers');
+const Team = require('../models/team');
+const { groupById } = require('../utils/helpers');
 
 const batchTeams = async (ids) => {
   const teams = await Team.find({ _id: { $in: ids } });

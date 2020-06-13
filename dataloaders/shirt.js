@@ -1,7 +1,7 @@
 const DataLoader = require('dataloader');
 
-const Shirt = require('../../models/shirt');
-const { groupById } = require('../../utils/helpers');
+const Shirt = require('../models/shirt');
+const { groupById } = require('../utils/helpers');
 
 const batchShirts = async (ids) => {
   const shirts = await Shirt.find({ _id: { $in: ids } });

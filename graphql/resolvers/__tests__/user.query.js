@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 
-const resolvers = require('../resolvers');
+const resolvers = require('../user');
 
 const { login } = resolvers.Query;
 

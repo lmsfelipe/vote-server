@@ -1,50 +1,59 @@
-const resolvers = require('../resolvers');
-const mongoMemoryServer = require('../../../utils/mongo-memory-server');
+const resolvers = require('../shirt');
 const models = require('../../../models');
+const mongooseMemoryServer = require('../../../utils/mongo-memory-server');
 
-const { createTeam, editTeam, deleteTeam } = resolvers.Mutation;
+const { createShirt, editShirt, deleteShirt } = resolvers.Mutation;
 
 const mockInputs = {
-  teamInput: {
-    name: 'Santos FC',
-    slug: 'santos-fc',
-    image: 'https://gremio.com.br/image.jpg',
-  },
   id: '123',
+  shirtInput: {
+    name: 'camisa 3',
+    slug: 'camisa-3',
+    mainImage: 'https://saopaulo.com.br/image2.jpg',
+    year: 2010,
+    brand: 'adidas',
+    images: [
+      {
+        url: 'https://google.com.br',
+        name: 'Imagem 2',
+      },
+    ],
+    teamId: '5ed2718963cb6200401963c6',
+  },
 };
 
-describe('[Mutation.createTeam]', () => {
+describe('[Mutation.createShirt]', () => {
   const mockContext = {
     authScope: {
       isAuth: true,
       role: 'admin',
     },
     models: {
-      Team: models.Team,
+      Shirt: models.Shirt,
     },
   };
 
   beforeAll(async () => {
-    await mongoMemoryServer.connect();
+    await mongooseMemoryServer.connect();
   });
 
   afterAll(async (done) => {
-    await mongoMemoryServer.disconnect();
+    await mongooseMemoryServer.disconnect();
     done();
   });
 
-  it('creates a new team', async (done) => {
-    const res = await createTeam(null, mockInputs, mockContext);
+  it('creates a new shirt', async (done) => {
+    const res = await createShirt(null, mockInputs, mockContext);
 
     expect(res._id).toBeDefined();
-    expect(res.name).toBe('Santos FC');
+    expect(res.name).toBe(mockInputs.shirtInput.name);
     done();
   });
 
   it('fails when some field is missing', async (done) => {
-    delete mockInputs.teamInput.name;
+    delete mockInputs.shirtInput.name;
 
-    await expect(createTeam(null, mockInputs, mockContext)).rejects.toThrow(
+    await expect(createShirt(null, mockInputs, mockContext)).rejects.toThrow(
       'Houve um erro em um dos campos',
     );
     done();
@@ -53,7 +62,7 @@ describe('[Mutation.createTeam]', () => {
   it('should return a permission error', async (done) => {
     mockContext.authScope.role = 'user';
 
-    await expect(createTeam(null, mockInputs, mockContext)).rejects.toThrow(
+    await expect(createShirt(null, mockInputs, mockContext)).rejects.toThrow(
       'Usuário sem permissão.',
     );
     done();
@@ -62,42 +71,42 @@ describe('[Mutation.createTeam]', () => {
   it('should return a authorization error', async (done) => {
     mockContext.authScope.isAuth = false;
 
-    await expect(createTeam(null, mockInputs, mockContext)).rejects.toThrow(
+    await expect(createShirt(null, mockInputs, mockContext)).rejects.toThrow(
       'Usuário não autenticado.',
     );
     done();
   });
 });
 
-describe('[Mutation.editTeam]', () => {
+describe('[Mutation.editShirt]', () => {
   const mockContext = {
     authScope: {
       isAuth: true,
       role: 'admin',
     },
     models: {
-      Team: { findByIdAndUpdate: jest.fn() },
+      Shirt: { findByIdAndUpdate: jest.fn() },
     },
   };
 
-  const { findByIdAndUpdate } = mockContext.models.Team;
+  const { findByIdAndUpdate } = mockContext.models.Shirt;
 
-  it('edits team data', async () => {
+  it('edits shirt data', async () => {
     findByIdAndUpdate.mockReturnValueOnce({ name: 'Camisa 1' });
-    const res = await editTeam(null, mockInputs, mockContext);
+    const res = await editShirt(null, mockInputs, mockContext);
 
     expect(res).toStrictEqual({ name: 'Camisa 1' });
   });
 
   it('should throw an error when team couldnt be edited', async () => {
-    await expect(editTeam(null, mockInputs, mockContext)).rejects.toThrow(
-      'Não foi possível editar o time.',
+    await expect(editShirt(null, mockInputs, mockContext)).rejects.toThrow(
+      'Não foi possível editar a camisa.',
     );
   });
 
   it('should throw an error when id is not defined', async () => {
     delete mockInputs.id;
-    await expect(editTeam(null, mockInputs, mockContext)).rejects.toThrow(
+    await expect(editShirt(null, mockInputs, mockContext)).rejects.toThrow(
       'Id é obrigatório.',
     );
   });
@@ -105,7 +114,7 @@ describe('[Mutation.editTeam]', () => {
   it('should return a permission error', async (done) => {
     mockContext.authScope.role = 'user';
 
-    await expect(editTeam(null, mockInputs, mockContext)).rejects.toThrow(
+    await expect(editShirt(null, mockInputs, mockContext)).rejects.toThrow(
       'Usuário sem permissão.',
     );
     done();
@@ -114,51 +123,51 @@ describe('[Mutation.editTeam]', () => {
   it('should return a authorization error', async (done) => {
     mockContext.authScope.isAuth = false;
 
-    await expect(editTeam(null, mockInputs, mockContext)).rejects.toThrow(
+    await expect(editShirt(null, mockInputs, mockContext)).rejects.toThrow(
       'Usuário não autenticado.',
     );
     done();
   });
 });
 
-describe('[Mutation.deleteTeam]', () => {
+describe('[Mutation.deleteShirt]', () => {
   const mockContext = {
     authScope: {
       isAuth: true,
       role: 'admin',
     },
     models: {
-      Team: { findByIdAndDelete: jest.fn() },
+      Shirt: { findByIdAndDelete: jest.fn() },
     },
   };
 
-  const { findByIdAndDelete } = mockContext.models.Team;
+  const { findByIdAndDelete } = mockContext.models.Shirt;
 
-  it('deletes a team from an id', async () => {
+  it('deletes a shirt from an id', async () => {
     findByIdAndDelete.mockReturnValueOnce({ name: 'Camisa 1' });
-    const res = await deleteTeam(null, { id: '123' }, mockContext);
+    const res = await deleteShirt(null, { id: '123' }, mockContext);
 
     expect(res).toStrictEqual({ name: 'Camisa 1' });
   });
 
-  it('throw an error if something failed', async () => {
+  it('throw an error if something faild', async () => {
     findByIdAndDelete.mockReturnValueOnce(null);
 
-    await expect(deleteTeam(null, { id: '123' }, mockContext)).rejects.toThrow(
-      'Não foi possível remover o time.',
+    await expect(deleteShirt(null, { id: '123' }, mockContext)).rejects.toThrow(
+      'Não foi possível remover a camisa.',
     );
   });
 
   it('should throw an error when id is not defined', async () => {
     await expect(
-      deleteTeam(null, { id: undefined }, mockContext),
+      deleteShirt(null, { id: undefined }, mockContext),
     ).rejects.toThrow('Id é obrigatório.');
   });
 
   it('should return a permission error', async (done) => {
     mockContext.authScope.role = 'user';
 
-    await expect(deleteTeam(null, { id: '123' }, mockContext)).rejects.toThrow(
+    await expect(deleteShirt(null, { id: '123' }, mockContext)).rejects.toThrow(
       'Usuário sem permissão.',
     );
     done();
@@ -167,7 +176,7 @@ describe('[Mutation.deleteTeam]', () => {
   it('should return a authorization error', async (done) => {
     mockContext.authScope.isAuth = false;
 
-    await expect(deleteTeam(null, { id: '123' }, mockContext)).rejects.toThrow(
+    await expect(deleteShirt(null, { id: '123' }, mockContext)).rejects.toThrow(
       'Usuário não autenticado.',
     );
     done();

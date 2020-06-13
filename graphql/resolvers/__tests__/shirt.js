@@ -1,4 +1,4 @@
-const resolvers = require('../resolvers');
+const resolvers = require('../shirt');
 
 describe('[Shirt.team]', () => {
   const mockContext = {

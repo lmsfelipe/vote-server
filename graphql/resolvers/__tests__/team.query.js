@@ -1,4 +1,4 @@
-const resolvers = require('../resolvers');
+const resolvers = require('../team');
 
 const { teams, teamById } = resolvers.Query;
 

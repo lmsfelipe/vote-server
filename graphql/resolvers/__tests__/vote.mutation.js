@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const resolvers = require('../resolvers');
+const resolvers = require('../vote');
 const models = require('../../../models');
 const mongoMemoryServer = require('../../../utils/mongo-memory-server');
 
@@ -50,8 +50,7 @@ describe('[Mutation.setVote]', () => {
     expect(res.userId).toBe(mockContext.authScope.userId);
     expect(res.shirtId).toBe(shirtId);
     expect(res._id).toBeDefined();
-    // Make sure that key votes have been summed up
-    expect(res.votes).toBe(1);
+    expect(res.votes).toBe(1); // Make sure that key votes have been summed up
     done();
   });
 
