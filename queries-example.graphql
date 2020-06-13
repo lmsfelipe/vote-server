@@ -1,5 +1,5 @@
 query login {
-  login(email: "felipe@email.com", password: "12345") {
+  login(email: "user@email.com", password: "12345") {
     token
   }
 }
@@ -33,12 +33,12 @@ query shirtById {
 mutation createShirt {
   createShirt(
     shirtInput: {
-      name: "camisa 4"
-      slug: "camise-4"
-      mainImage: "https://lh3.googleusercontent.com/0n9M3fVSxotcbImjLYEMyxn_VXk2gQZXA-TehM2p7SodroSZ2U9OGI0acenNAMIug0qpwh8a9iWoDzHQ2vqI5zpF"
+      name: "camisa 1"
+      slug: "camise-1"
+      mainImage: "https://site.com.br/someimage.jpg"
       year: 2010
       brand: "adidas"
-      images: [{ url: "https://google.com.br", name: "Imagem 1" }]
+      images: [{ url: "https://site.com.br/someimage2.jpg", name: "Imagem 1" }]
       teamId: "5e9e3f6fb9454c001f7efd46"
     }
   ) {
@@ -53,7 +53,7 @@ mutation editShirt {
   editShirt(
     id: "5ecc6cd18fa0ae00e38fbd1e"
     shirtInput: {
-      name: "Camisa 3"
+      name: "Camisa 2"
       brand: "adidas"
       teamId: "5ecc679b8b48b4008fc342b5"
     }
@@ -66,21 +66,21 @@ mutation editShirt {
   }
 }
 
-query allTeams {
-  teams {
-    _id
+mutation createTeam {
+  createTeam(
+    teamInput: {
+      name: "Santos FC"
+      slug: "santos-fc"
+      image: "https://santos.com.br/image.jpg"
+    }
+  ) {
     name
   }
 }
 
-mutation createTeam {
-  createTeam(
-    teamInput: {
-      name: "Gremio"
-      slug: "Gremio"
-      image: "https://gremio.com.br/image.jpg"
-    }
-  ) {
+query allTeams {
+  teams {
+    _id
     name
   }
 }
