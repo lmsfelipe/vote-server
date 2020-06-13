@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
-    "apollo-server-express": "^2.12.0",
+    "apollo-server-express": "^2.14.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
