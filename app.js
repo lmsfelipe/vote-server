@@ -21,6 +21,9 @@ app.use(cors());
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
+  engine: {
+    experimental_schemaReporting: true,
+  },
   context: ({ req, connection }) => {
     if (connection) {
       return {
@@ -43,8 +46,8 @@ const server = new ApolloServer({
     };
   },
 });
-server.applyMiddleware({ app });
 
+server.applyMiddleware({ app });
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
