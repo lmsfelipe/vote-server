@@ -2,8 +2,8 @@ const shirtsLoader = require('./shirt');
 const teamsLoader = require('./team');
 
 const loaders = {
-  shirtsLoader,
-  teamsLoader,
+  teamsLoader: teamsLoader(),
+  shirtsLoader: shirtsLoader(),
 };
 
 module.exports = loaders;
