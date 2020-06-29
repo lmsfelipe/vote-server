@@ -33,7 +33,7 @@ const plugin = {
   },
 };
 
-// This function catch all errors and send to looger
+// Function to catch all errors and send to looger
 const formatError = (error) => {
   dbLogger.error(error);
   return error;

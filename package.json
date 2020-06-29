@@ -1,11 +1,12 @@
 {
   "name": "vote-api",
   "version": "1.0.0",
-  "main": "app.js",
+  "description": "GraphQL NodeJS server to vote football shirts",
+  "main": "index.js",
   "author": "Felipe Souza",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon -L app.js",
+    "start": "nodemon -L src/index.js",
     "test": "jest"
   },
   "dependencies": {
