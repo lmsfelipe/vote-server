@@ -8,8 +8,18 @@ module.exports = gql`
   }
 
   extend type Query {
-    shirts: [Shirt!]!
+    shirts(first: Int, after: ID): ShirtConnection!
     shirtById(id: ID!): Shirt!
+  }
+
+  type ShirtConnection {
+    edges: [ShirtsEdge]!
+    pageInfo: PageInfo!
+  }
+
+  type ShirtsEdge {
+    cursor: ID!
+    node: Shirt!
   }
 
   type Shirt {

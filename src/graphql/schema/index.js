@@ -17,6 +17,11 @@ const RootSchema = gql`
   type Subscription {
     _empty: String
   }
+
+  type PageInfo {
+    hasNextPage: Boolean!
+    endCursor: ID!
+  }
 `;
 
 module.exports = [RootSchema, Team, Shirt, User, Vote];

@@ -1,6 +1,7 @@
 const joi = require('@hapi/joi');
 const { UserInputError, ApolloError } = require('apollo-server-express');
 
+const paginateResults = require('../../utils/paginateResults');
 const {
   checkAuthentication,
   checkAuthorization,
@@ -8,9 +9,8 @@ const {
 
 module.exports = {
   Query: {
-    async shirts(_, __, { models }) {
-      const shirts = await models.Shirt.find();
-
+    async shirts(_, args, { models }) {
+      const shirts = await paginateResults(args, models.Shirt);
       if (!shirts) return [];
 
       return shirts;

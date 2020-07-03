@@ -8,8 +8,18 @@ module.exports = gql`
   }
 
   extend type Query {
-    teams: [Team!]!
+    teams(first: Int, after: ID): TeamConnection!
     teamById(id: ID!): Team!
+  }
+
+  type TeamConnection {
+    edges: [TeamsEdge]!
+    pageInfo: PageInfo!
+  }
+
+  type TeamsEdge {
+    cursor: ID!
+    node: Team!
   }
 
   type Team {
@@ -17,12 +27,12 @@ module.exports = gql`
     name: String!
     slug: String!
     image: String!
-    region: ShirtRegion!
+    region: TeamRegion!
     createdAt: String!
     updatedAt: String!
   }
 
-  type ShirtRegion {
+  type TeamRegion {
     country: String!
     state: String!
     city: String!
