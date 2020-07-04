@@ -14,19 +14,47 @@ const mockContext = {
 describe('[Query.teams]', () => {
   const { find } = mockContext.models.Team;
 
-  it('returns a list of teams', async () => {
-    find.mockReturnValueOnce([{ name: 'Santos FC' }]);
+  it('gets paginated teams', async () => {
+    const responseMock = [
+      { name: 'Santos', _id: '11aa22bb' },
+      { name: 'São Paulo', _id: '22aa22bb' },
+      { name: 'Palmeiras', _id: '33aa22bb' },
+    ];
+    const paginatedMock = {
+      pageInfo: {
+        endCursor: '22aa22bb',
+        hasNextPage: true,
+      },
+      edges: [
+        {
+          cursor: '11aa22bb',
+          node: { name: 'Santos', _id: '11aa22bb' },
+        },
+        {
+          cursor: '22aa22bb',
+          node: { name: 'São Paulo', _id: '22aa22bb' },
+        },
+      ],
+    };
 
-    const res = await teams(null, null, mockContext);
+    find.mockReturnValueOnce({
+      limit: () => ({
+        lean: () => responseMock,
+      }),
+    });
 
-    expect(res).toEqual([{ name: 'Santos FC' }]);
+    const res = await teams(null, { first: 2 }, mockContext);
+    expect(res).toEqual(paginatedMock);
   });
 
-  it('returns empty array if response is null', async () => {
-    find.mockReturnValueOnce(null);
+  it('throws an error when wasnt possible to fetch teams', async () => {
+    find.mockReturnValueOnce({
+      limit: () => ({
+        lean: () => null,
+      }),
+    });
 
-    const res = await teams(null, null, mockContext);
-    expect(res).toEqual([]);
+    await expect(teams(null, {}, mockContext)).rejects.toThrow();
   });
 });
 

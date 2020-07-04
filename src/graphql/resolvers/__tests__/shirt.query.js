@@ -10,18 +10,47 @@ describe('[Query.shirts]', () => {
   const { find } = mockContext.models.Shirt;
   const { shirts } = resolvers.Query;
 
-  it('gets all shirts from context models', async () => {
-    find.mockReturnValueOnce([{ name: 'Camisa 1' }]);
+  it('gets paginated shirts', async () => {
+    const responseMock = [
+      { name: 'Camisa 1', _id: '11aa22bb' },
+      { name: 'Camisa 2', _id: '22aa22bb' },
+      { name: 'Camisa 3', _id: '33aa22bb' },
+    ];
+    const paginatedMock = {
+      pageInfo: {
+        endCursor: '22aa22bb',
+        hasNextPage: true,
+      },
+      edges: [
+        {
+          cursor: '11aa22bb',
+          node: { name: 'Camisa 1', _id: '11aa22bb' },
+        },
+        {
+          cursor: '22aa22bb',
+          node: { name: 'Camisa 2', _id: '22aa22bb' },
+        },
+      ],
+    };
 
-    const res = await shirts(null, null, mockContext);
-    expect(res).toEqual([{ name: 'Camisa 1' }]);
+    find.mockReturnValueOnce({
+      limit: () => ({
+        lean: () => responseMock,
+      }),
+    });
+
+    const res = await shirts(null, { first: 2 }, mockContext);
+    expect(res).toEqual(paginatedMock);
   });
 
-  it('returns empty array when response is null', async () => {
-    find.mockReturnValueOnce(null);
+  it('throws an error when wasnt possible to fetch shirts', async () => {
+    find.mockReturnValueOnce({
+      limit: () => ({
+        lean: () => null,
+      }),
+    });
 
-    const res = await shirts(null, null, mockContext);
-    expect(res).toEqual([]);
+    await expect(shirts(null, {}, mockContext)).rejects.toThrow();
   });
 });
 

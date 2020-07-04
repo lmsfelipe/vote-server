@@ -9,9 +9,23 @@ const {
 
 module.exports = {
   Query: {
-    async teams(_, args, { models }) {
-      const teams = await paginateResults(args, models.Team);
-      if (!teams) return [];
+    async teams(_, { first = 5, after }, { models }) {
+      const query = after ? { _id: { $gt: after } } : {};
+      let resp = [];
+
+      try {
+        resp = await models.Team.find(query)
+          .limit(first + 1) // Increase 1 to check if has more results
+          .lean();
+      } catch (error) {
+        throw new ApolloError(error.response, 400);
+      }
+
+      if (!resp) {
+        throw new ApolloError('Não foi possível buscar os times.', 400);
+      }
+
+      const teams = paginateResults(first, resp);
 
       return teams;
     },

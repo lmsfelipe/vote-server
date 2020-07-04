@@ -9,9 +9,23 @@ const {
 
 module.exports = {
   Query: {
-    async shirts(_, args, { models }) {
-      const shirts = await paginateResults(args, models.Shirt);
-      if (!shirts) return [];
+    async shirts(_, { first = 5, after }, { models }) {
+      const query = after ? { _id: { $gt: after } } : {};
+      let resp = [];
+
+      try {
+        resp = await models.Shirt.find(query)
+          .limit(first + 1) // Increase 1 to check if has more results
+          .lean();
+      } catch (error) {
+        throw new ApolloError(error.response, 400);
+      }
+
+      if (!resp) {
+        throw new ApolloError('Não foi possível buscar as camisas.', 400);
+      }
+
+      const shirts = paginateResults(first, resp);
 
       return shirts;
     },
