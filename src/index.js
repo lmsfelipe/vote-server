@@ -62,7 +62,7 @@ const context = ({ req, connection }) => {
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
-  // Engine is enable to monitor app in Apollo Manager
+  // Engine is enabled to monitorize graphQL connections in Apollo Manager
   engine: { experimental_schemaReporting: true },
   tracing: true,
   formatError,
