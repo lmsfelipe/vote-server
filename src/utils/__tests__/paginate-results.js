@@ -1,6 +1,6 @@
-const paginateResults = require('../paginateResults');
+const paginateResults = require('../paginate-results');
 
-describe('PaginateResults', () => {
+describe('[Utils.paginateResults]', () => {
   it('returns cursor pagination', () => {
     const dataMock = [
       { name: 'Camisa 1', _id: '11aa22bb' },

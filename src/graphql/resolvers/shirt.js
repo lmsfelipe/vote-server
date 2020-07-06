@@ -1,7 +1,7 @@
 const joi = require('@hapi/joi');
 const { UserInputError, ApolloError } = require('apollo-server-express');
 
-const paginateResults = require('../../utils/paginateResults');
+const paginateResults = require('../../utils/paginate-results');
 const {
   checkAuthentication,
   checkAuthorization,
