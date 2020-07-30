@@ -1,4 +1,4 @@
-const { merge } = require('lodash');
+const merge = require('lodash/merge');
 
 const userResolver = require('./user');
 const shirtResolver = require('./shirt');

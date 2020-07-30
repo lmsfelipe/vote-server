@@ -9,7 +9,7 @@ module.exports = gql`
     shirtVoted: Shirt
   }
 
-  type Vote {
+  type Vote implements Node {
     _id: ID!
     userId: String!
     shirtId: String!

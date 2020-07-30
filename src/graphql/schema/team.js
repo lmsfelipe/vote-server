@@ -22,7 +22,7 @@ module.exports = gql`
     node: Team!
   }
 
-  type Team {
+  type Team implements Node {
     _id: ID!
     name: String!
     slug: String!

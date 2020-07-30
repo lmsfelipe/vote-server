@@ -22,6 +22,10 @@ const RootSchema = gql`
     hasNextPage: Boolean!
     endCursor: ID!
   }
+
+  interface Node {
+    _id: ID!
+  }
 `;
 
 module.exports = [RootSchema, Team, Shirt, User, Vote];

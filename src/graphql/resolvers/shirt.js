@@ -55,6 +55,12 @@ module.exports = {
     },
   },
 
+  Node: {
+    __resolveType(node) {
+      return node.type;
+    },
+  },
+
   Mutation: {
     async createShirt(_, { shirtInput }, context) {
       const { name, slug, mainImage, teamId, year, brand, images } = shirtInput;

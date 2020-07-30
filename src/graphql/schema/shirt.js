@@ -22,7 +22,7 @@ module.exports = gql`
     node: Shirt!
   }
 
-  type Shirt {
+  type Shirt implements Node {
     _id: ID!
     name: String!
     slug: String!

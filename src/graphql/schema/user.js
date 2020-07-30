@@ -15,7 +15,7 @@ module.exports = gql`
     user
   }
 
-  type User {
+  type User implements Node {
     _id: ID!
     name: String!
     email: String!
