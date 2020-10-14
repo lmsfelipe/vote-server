@@ -1,11 +1,23 @@
 query login {
-  login(email: "user@email.com", password: "12345") {
+  login(email: "felipe@email.com", password: "12345") {
     token
   }
 }
 
+mutation createUser {
+  createUser(
+    userInput: {
+      name: "Felipe Lima",
+      email: "felipe@email.com",
+      password: "12345",
+    }
+  ) {
+    name
+  }
+}
+
 mutation setVote {
-  setVote(shirtId: "5ed2feb791120d00a7b3e141a") {
+  setVote(shirtId: "5f85ffb18ea18500215eb32d") {
     userId
     votes
   }
@@ -55,11 +67,11 @@ mutation createShirt {
     shirtInput: {
       name: "camisa 3"
       slug: "camise-3"
-      mainImage: "https://saopaulo.com.br/image2.jpg"
+      mainImage: "https://santos.com.br/image2.jpg"
       year: 2010
-      brand: "adidas"
+      brand: "Umbro"
       images: [{ url: "https://google.com.br", name: "Imagem 2" }]
-      teamId: "5ed2718963cb6200401963c6"
+      teamId: "5f85ff778ea18500215eb30d"
     }
   ) {
     name
@@ -103,9 +115,9 @@ query allTeams {
 mutation createTeam {
   createTeam(
     teamInput: {
-      name: "Corinthians"
-      slug: "corinthians"
-      image: "https://corinthians.com.br/image.jpg"
+      name: "Santos"
+      slug: "santos"
+      image: "https://santos.com.br/image.jpg"
     }
   ) {
     _id

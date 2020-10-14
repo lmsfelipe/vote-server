@@ -1,7 +1,7 @@
 module.exports = (first, data) => {
   const hasNextPage = data.length > first;
 
-  // It removes last payload item to correspond `first` argument
+  // It removes the last payload item to correspond `first` argument
   if (hasNextPage) {
     data.pop();
   }

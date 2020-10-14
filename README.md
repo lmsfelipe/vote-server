@@ -4,6 +4,10 @@ A NodeJs, mongoDB and GraphQL server for a football vote application.
 
 ## Command
 
+#### Env
+
+Rename **.env.example** to **.env**
+
 #### Docker and docker-compose
 
 ```bash

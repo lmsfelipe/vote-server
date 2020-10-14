@@ -33,7 +33,7 @@ const plugin = {
   },
 };
 
-// Function to catch all errors and send to looger
+// Function to catch all errors and send to logger
 const formatError = (error) => {
   dbLogger.error(error);
   return error;
@@ -63,7 +63,7 @@ const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   // Engine is enabled to monitorize graphQL connections in Apollo Manager
-  engine: { experimental_schemaReporting: true },
+  // engine: { experimental_schemaReporting: true },
   tracing: true,
   formatError,
   plugins: [plugin],
